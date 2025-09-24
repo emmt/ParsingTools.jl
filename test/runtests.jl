@@ -2,6 +2,7 @@ module ParsingToolsTests
 
 using ParsingTools
 using Test
+using Aqua
 
 @testset "ParsingTools.jl" begin
     @testset "tokenize" begin
@@ -24,6 +25,11 @@ using Test
                          "/* oops! */" => (:comment,   1),
                          ";"           => (:separator, 1)]
     end
+end
+
+
+@testset "Quality tests" begin
+    Aqua.test_all(ParsingTools)
 end
 
 end # module

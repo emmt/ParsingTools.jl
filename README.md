@@ -3,6 +3,7 @@
 [![Build Status](https://github.com/emmt/ParsingTools.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/emmt/ParsingTools.jl/actions/workflows/CI.yml?query=branch%3Amain)
 [![Build Status](https://ci.appveyor.com/api/projects/status/github/emmt/ParsingTools.jl?svg=true)](https://ci.appveyor.com/project/emmt/ParsingTools-jl)
 [![Coverage](https://codecov.io/gh/emmt/ParsingTools.jl/branch/main/graph/badge.svg)](https://codecov.io/gh/emmt/ParsingTools.jl)
+[![Aqua QA](https://raw.githubusercontent.com/JuliaTesting/Aqua.jl/master/badge.svg)](https://github.com/JuliaTesting/Aqua.jl)
 
 The [`ParsingTools.jl`](https://github.com/emmt/ParsingTools.jl) package provides simple
 tools to parse programming languages. This is a work in progress; for now, a tokenizer for
