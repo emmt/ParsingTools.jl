@@ -19,7 +19,8 @@ using Aqua
         B = @inferred tokenize(:C, "val = -.78e-15 # x /* oops! */;")
         @test B == Token["val"         => (:name,      1),
                          "="           => (:operator,  1),
-                         "-.78e-15"    => (:float,     1),
+                         "-"           => (:operator,  1),
+                         ".78e-15"     => (:float,     1),
                          "#"           => (:operator,  1),
                          "x"           => (:name,      1),
                          "/* oops! */" => (:comment,   1),

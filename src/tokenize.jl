@@ -96,7 +96,7 @@ The following table summarizes the possible associations:
 | `%`      | `:operator` | `/=`     | `:operator` | `]`      | `:close`     |
 | `%=`     | `:operator` | `/`      | `:operator` | `{`      | `:open`      |
 | `^`      | `:operator` | `<<=`    | `:operator` | `}`      | `:close`     |
-| `^=`     | `:operator` | `<<`     | `:operator` | `-1.2e+4`| `:float`     |
+| `^=`     | `:operator` | `<<`     | `:operator` | `1.2e+4` | `:float`     |
 | `&`      | `:operator` | `<=`     | `:operator` | `0x7f`   | `:integer`   |
 | `&=`     | `:operator` | `<`      | `:operator` | `idx2`   | `:name`      |
 | `&&`     | `:operator` | `>=`     | `:operator` | `"…"`    | `:string`    |
@@ -114,7 +114,8 @@ julia> tokenize(:C, "val = -.78e-15 # x /* oops! */;")
 7-element Vector{Token}:
  Token("val"         => (:name,      1))
  Token("="           => (:operator,  1))
- Token("-.78e-15"    => (:float,     1))
+ Token("-"           => (:operator,  1))
+ Token(".78e-15"     => (:float,     1))
  Token("#"           => (:operator,  1))
  Token("x"           => (:name,      1))
  Token("/* oops! */" => (:comment,   1))
@@ -146,8 +147,9 @@ function tokenize(lang::Val{:C}, code::String)
 
     # Regular expressions matching literal numbers, left anchored and with at least two
     # groups, the first one to capture the token, and a last () to capture the next index.
-    int_re = r"\G([-+]?\d+[UL]*|0x[0-9A-Fa-f]+)()"
-    flt_re = r"\G([-+]?((\.\d+|\d+\.\d*)([eE][-+]?\d+)?|\d+[eE][-+]?\d+))()"
+    # The unary "+" or "-", if any is a separate token.
+    int_re = r"\G(\d+[UL]*|0x[0-9A-Fa-f]+)()"
+    flt_re = r"\G(((\.\d+|\d+\.\d*)([eE][-+]?\d+)?|\d+[eE][-+]?\d+))()"
 
     line = 1
     tokens = Token[]
@@ -304,6 +306,20 @@ function tokenize(lang::Val{:C}, code::String)
             index = last(m.offsets)
             continue
         end
+        if c == '+'
+            # Match "+", "++", or "+=".
+            m = match(r"\G(\+[+=]?)()", code, index)
+            push!(tokens, first(m.captures) => (:operator, line))
+            index = last(m.offsets)
+            continue
+        end
+        if c == '-'
+            # Match "-", "--", "-=", or "->".
+            m = match(r"\G(-[->=]?)()", code, index)
+            push!(tokens, first(m.captures) => (:operator, line))
+            index = last(m.offsets)
+            continue
+        end
         if c == '&' || c == '|'
             # Match "&", "&&", "&=", "|", "||", or "|=".
             m = match(r"\G((.)(\2|=)?)()", code, index)
@@ -311,7 +327,7 @@ function tokenize(lang::Val{:C}, code::String)
             index = last(m.offsets)
             continue
         end
-        if c == '+' || c == '-' || '0' <= c <= '9'
+        if '0' <= c <= '9'
             # May be a floating-point literal.
             m = match(flt_re, code, index)
             if m != nothing
@@ -319,25 +335,10 @@ function tokenize(lang::Val{:C}, code::String)
                 index = last(m.offsets)
                 continue
             end
-            # May be an integer literal.
+            # Otherwise, must be an integer literal.
             m = match(int_re, code, index)
             if m != nothing
                 push!(tokens, first(m.captures) => (:integer, line))
-                index = last(m.offsets)
-                continue
-            end
-            # Must be an operator.
-            if c == '+'
-                # Match "+", "++", or "+=".
-                m = match(r"\G(\+[+=]?)()", code, index)
-                push!(tokens, first(m.captures) => (:operator, line))
-                index = last(m.offsets)
-                continue
-            end
-            if c == '-'
-                # Match "-", "--", "-=", or "->".
-                m = match(r"\G(-[->=]?)()", code, index)
-                push!(tokens, first(m.captures) => (:operator, line))
                 index = last(m.offsets)
                 continue
             end
