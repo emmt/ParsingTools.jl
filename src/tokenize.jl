@@ -40,6 +40,9 @@ end
 
 Set the `PCRE.ANCHORED` option of a the regular expression `re` and return it.
 
+!!! note
+    A better possibility is to start the regular expression by `\\G`.
+
 """
 function anchored!(re::Regex)
     # See https://stackoverflow.com/questions/46288987/
@@ -143,8 +146,8 @@ function tokenize(lang::Val{:C}, code::String)
 
     # Regular expressions matching literal numbers, left anchored and with at least two
     # groups, the first one to capture the token, and a last () to capture the next index.
-    int_re = anchored!(r"([-+]?\d+[UL]*|0x[0-9A-Fa-f]+)()")
-    flt_re = anchored!(r"([-+]?((\.\d+|\d+\.\d*)([eE][-+]?\d+)?|\d+[eE][-+]?\d+))()")
+    int_re = r"\G([-+]?\d+[UL]*|0x[0-9A-Fa-f]+)()"
+    flt_re = r"\G([-+]?((\.\d+|\d+\.\d*)([eE][-+]?\d+)?|\d+[eE][-+]?\d+))()"
 
     line = 1
     tokens = Token[]
@@ -163,7 +166,7 @@ function tokenize(lang::Val{:C}, code::String)
         end
         if 'a' <= c <= 'z' || 'A' <= c <= 'Z' || c == '_'
             # Symbol name.
-            m = match(anchored!(r"([A-Z_a-z][0-9A-Z_a-z]*)()"), code, index)
+            m = match(r"\G([A-Z_a-z][0-9A-Z_a-z]*)()", code, index)
             push!(tokens, first(m.captures) => (:name, line))
             index = last(m.offsets)
             continue
@@ -296,14 +299,14 @@ function tokenize(lang::Val{:C}, code::String)
         end
         if c == '=' || c == '*' || c == '!' || c == '%' || c == '^'
             # These may be followed by a "=".
-            m = match(anchored!(r"(.=?)()"), code, index)
+            m = match(r"\G(.=?)()", code, index)
             push!(tokens, first(m.captures) => (:operator, line))
             index = last(m.offsets)
             continue
         end
         if c == '&' || c == '|'
             # Match "&", "&&", "&=", "|", "||", or "|=".
-            m = match(anchored!(r"((.)(\2|=)?)()"), code, index)
+            m = match(r"\G((.)(\2|=)?)()", code, index)
             push!(tokens, first(m.captures) => (:operator, line))
             index = last(m.offsets)
             continue
@@ -326,14 +329,14 @@ function tokenize(lang::Val{:C}, code::String)
             # Must be an operator.
             if c == '+'
                 # Match "+", "++", or "+=".
-                m = match(anchored!(r"(\+[+=]?)()"), code, index)
+                m = match(r"\G(\+[+=]?)()", code, index)
                 push!(tokens, first(m.captures) => (:operator, line))
                 index = last(m.offsets)
                 continue
             end
             if c == '-'
                 # Match "-", "--", "-=", or "->".
-                m = match(anchored!(r"(-[->=]?)()"), code, index)
+                m = match(r"\G(-[->=]?)()", code, index)
                 push!(tokens, first(m.captures) => (:operator, line))
                 index = last(m.offsets)
                 continue
@@ -355,7 +358,7 @@ function tokenize(lang::Val{:C}, code::String)
         end
         if c == '<' || c == '>'
             # May be "<", "<<", "<=", "<<=", ">", ">>", ">=" or ">>="
-            m = match(anchored!(r"((.)\2?=?)()"), code, index)
+            m = match(r"\G((.)\2?=?)()", code, index)
             push!(tokens, first(m.captures) => (:operator, line))
             index = last(m.offsets)
             continue
