@@ -1,0 +1,13 @@
+name = "ParsingTools"
+uuid = "b83cd7f5-a5d7-4974-8c67-0ec65dfcfb8e"
+authors = ["Éric Thiébaut <eric.thiebaut@univ-lyon1.fr> and contributors"]
+version = "0.1.0"
+
+[compat]
+julia = "1"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
