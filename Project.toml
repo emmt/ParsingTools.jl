@@ -3,7 +3,11 @@ uuid = "b83cd7f5-a5d7-4974-8c67-0ec65dfcfb8e"
 authors = ["Éric Thiébaut <eric.thiebaut@univ-lyon1.fr> and contributors"]
 version = "0.1.0"
 
+[deps]
+Compat = "34da2185-b29b-5c13-b0c7-acf172513d20"
+
 [compat]
+Compat = "4.18.0"
 julia = "1"
 
 [extras]
