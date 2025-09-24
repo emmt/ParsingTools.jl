@@ -6,6 +6,15 @@ using Aqua
 
 @testset "ParsingTools.jl" begin
     @testset "tokenize" begin
+        # Check parsing of integer suffixes.
+        @test tokenize(:C, "0x12f4ul") == Token["0x12f4ul" => (:integer, 1)]
+        @test tokenize(:C, "0x12f4alLu") == Token["0x12f4alLu" => (:integer, 1)]
+        @test tokenize(:C, "0x12f4LU") == Token["0x12f4LU" => (:integer, 1)]
+        @test tokenize(:C, "0x006eELLU") == Token["0x006eELLU" => (:integer, 1)]
+        @test tokenize(:C, "1234ullu") == Token["1234ull" => (:integer, 1), "u" => (:name, 1)]
+        @test tokenize(:C, "1234uul") == Token["1234u" => (:integer, 1), "ul" => (:name, 1)]
+
+        # Tokenize chunks of code.
         A = @inferred tokenize(:C, "#include <sys/types.h>")
         @test A == Token["#"       => (:operator, 1),
                          "include" => (:name,     1),

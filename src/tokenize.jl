@@ -148,7 +148,7 @@ function tokenize(lang::Val{:C}, code::String)
     # Regular expressions matching literal numbers, left anchored and with at least two
     # groups, the first one to capture the token, and a last () to capture the next index.
     # The unary "+" or "-", if any is a separate token.
-    int_re = r"\G(([1-9][0-9]*|0[Xx][0-9A-Fa-f]+|0[Bb][0-1]+|0[0-7]*)[LUlu]*)()"
+    int_re = r"\G(([1-9][0-9]*|0[Xx][0-9A-Fa-f]+|0[Bb][0-1]+|0[0-7]*)([Uu][Ll]{0,2}|[Ll]{1,2}[Uu]?)?)()"
     flt_re = r"\G(((\.\d+|\d+\.\d*)([Ee][-+]?\d+)?|\d+[Ee][-+]?\d+))()"
 
     line = 1
