@@ -180,6 +180,7 @@ function tokenize(lang::Val{:C}, code::String)
             t = next <= stop ? code[next] : null
             if t == '/'
                 # Fetch "//…" comment line.
+                linestart = line
                 while true
                     index = next
                     next = nextind(code, next)
@@ -191,7 +192,7 @@ function tokenize(lang::Val{:C}, code::String)
                         break
                     end
                 end
-                push!(tokens, SubString(code, anchor, index) => (:comment, line))
+                push!(tokens, SubString(code, anchor, index) => (:comment, linestart))
                 index = next
             elseif t == '*'
                 # Fetch "/*…*/" comment block.
