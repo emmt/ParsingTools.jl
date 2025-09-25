@@ -50,7 +50,7 @@ is_separator(t::Token) = t.type === :separator
 Yield whether `t` is an opening token like `(`, `[`, or `{`.
 
 """
-is_opening(t::Token) = t.type === :open
+is_opening(t::Token) = t.type === :opening
 
 """
     is_closing(t::Token)
@@ -58,7 +58,7 @@ is_opening(t::Token) = t.type === :open
 Yield whether `t` is a closing token like `)`, `]`, or `}`.
 
 """
-is_closing(t::Token) = t.type === :close
+is_closing(t::Token) = t.type === :closing
 
 for (s, (a, b)) in ("(" => (:opening, :parenthesis),
                     ")" => (:closing, :parenthesis),

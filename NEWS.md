@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+### Changed
+
+- The respective `type` of opening and closing tokens is `:opening` and `:closing`. It was
+  `:open` and `:close`.
+
 ### Added
 
 - Predicate functions `is_asterisk`, `is_closing`, `is_closing_brace`, `is_closing_bracket`,

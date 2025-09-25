@@ -68,12 +68,12 @@ The following table summarizes the possible associations:
 | `=`      | `:operator` | `-`      | `:operator` | `:`      | `:separator` |
 | `==`     | `:operator` | `-=`     | `:operator` | `;`      | `:separator` |
 | `*`      | `:operator` | `--`     | `:operator` | `,`      | `:separator` |
-| `*=`     | `:operator` | `->`     | `:operator` | `(`      | `:open`      |
-| `!`      | `:operator` | `/*…*/`  | `:comment`  | `)`      | `:close`     |
-| `!=`     | `:operator` | `//…`    | `:comment`  | `[`      | `:open`      |
-| `%`      | `:operator` | `/=`     | `:operator` | `]`      | `:close`     |
-| `%=`     | `:operator` | `/`      | `:operator` | `{`      | `:open`      |
-| `^`      | `:operator` | `<<=`    | `:operator` | `}`      | `:close`     |
+| `*=`     | `:operator` | `->`     | `:operator` | `(`      | `:opening`   |
+| `!`      | `:operator` | `/*…*/`  | `:comment`  | `)`      | `:closing`   |
+| `!=`     | `:operator` | `//…`    | `:comment`  | `[`      | `:opening`   |
+| `%`      | `:operator` | `/=`     | `:operator` | `]`      | `:closing`   |
+| `%=`     | `:operator` | `/`      | `:operator` | `{`      | `:opening`   |
+| `^`      | `:operator` | `<<=`    | `:operator` | `}`      | `:closing`   |
 | `^=`     | `:operator` | `<<`     | `:operator` | `1.2e+4` | `:float`     |
 | `&`      | `:operator` | `<=`     | `:operator` | `0x7f`   | `:integer`   |
 | `&=`     | `:operator` | `<`      | `:operator` | `idx2`   | `:name`      |
@@ -260,12 +260,12 @@ function tokenize(lang::Val{:C}, code::String)
             continue
         end
         if c == '(' || c == '{' || c == '['
-            push!(tokens, SubString(code, index, index) => (:open, line))
+            push!(tokens, SubString(code, index, index) => (:opening, line))
             index = nextind(code, index)
             continue
         end
         if c == ')' || c == '}' || c == ']'
-            push!(tokens, SubString(code, index, index) => (:close, line))
+            push!(tokens, SubString(code, index, index) => (:closing, line))
             index = nextind(code, index)
             continue
         end
