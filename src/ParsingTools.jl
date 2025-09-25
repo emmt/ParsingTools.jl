@@ -6,6 +6,7 @@ export
 
     # Predicates.
     is_asterisk,
+    is_character,
     is_closing,
     is_closing_brace,
     is_closing_bracket,
@@ -13,14 +14,19 @@ export
     is_comma,
     is_comment,
     is_escape_newline,
+    is_float,
     is_identifier,
+    is_integer,
+    is_literal,
+    is_number,
     is_opening,
     is_opening_brace,
     is_opening_bracket,
     is_opening_parenthesis,
     is_operator,
     is_semicolon,
-    is_separator
+    is_separator,
+    is_string
 
 using Compat
 

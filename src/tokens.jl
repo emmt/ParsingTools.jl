@@ -21,6 +21,18 @@ for f in (:(==), :isequal)
 end
 
 """
+    is_comment(t::Token)
+
+Yield whether `t` is a comment.
+
+For example, to strip the comment from a vector of `tokens`:
+
+    filter(!is_comment, tokens)
+
+"""
+is_comment(t::Token) = t.type === :comment
+
+"""
     is_identifier(t::Token)
 
 Yield whether `t` is an identifier or a keyword.
@@ -43,6 +55,55 @@ Yield whether `t` is a separator.
 
 """
 is_separator(t::Token) = t.type === :separator
+
+"""
+    is_string(t::Token)
+
+Yield whether `t` is a literal string token like `"hello world!"`.
+
+"""
+is_string(t::Token) = t.type === :string
+
+"""
+    is_character(t::Token)
+
+Yield whether `t` is a literal character token like `'x'` or `'\\n'`.
+
+"""
+is_character(t::Token) = t.type === :character
+
+"""
+    is_integer(t::Token)
+
+Yield whether `t` is a literal integer token.
+
+"""
+is_integer(t::Token) = t.type === :integer
+
+"""
+    is_float(t::Token)
+
+Yield whether `t` is a literal floating-point token.
+
+"""
+is_float(t::Token) = t.type === :float
+
+"""
+    is_number(t::Token)
+
+Yield whether `t` is a literal number token, i.e. an integer or a floating-point literal.
+
+"""
+is_number(t::Token) = is_integer(t) || is_float(t)
+
+"""
+    is_literal(t::Token)
+
+Yield whether `t` is a literal token, i.e. an integer, floating-point, character, or string
+literal.
+
+"""
+is_literal(t::Token) = is_number(t) || is_string(t) || is_character(t)
 
 """
     is_opening(t::Token)
@@ -102,14 +163,6 @@ Yield whether `t` is the `;` separator.
 
 """
 is_semicolon(t::Token) = is_separator(t) && t.text == ";"
-
-"""
-    is_comment(t::Token)
-
-Yield whether `t` is a comment.
-
-"""
-is_comment(t::Token) = t.type === :comment
 
 """
     is_escape_newline(t::Token)

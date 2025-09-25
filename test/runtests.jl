@@ -7,7 +7,7 @@ using Aqua
 @testset "ParsingTools.jl" begin
     @testset "tokenize" begin
 
-        code = @inferred tokenize(:C, "([{}])*,;\\\nblue")
+        code = @inferred tokenize(:C, "([{}])*,;\\\nblue=123+0.4;red=\"red\";green+='G';")
         @test is_opening(code[1])
         @test is_opening(code[2])
         @test is_opening(code[3])
@@ -31,6 +31,29 @@ using Aqua
         @test is_identifier(code[11])
         @test code[11].text == "blue"
         @test code[11].line == 2
+        @test is_operator(code[12])
+        @test is_literal(code[13])
+        @test is_integer(code[13])
+        @test is_operator(code[14])
+        @test is_literal(code[15])
+        @test is_float(code[15])
+        @test is_separator(code[16])
+        @test is_semicolon(code[16])
+        @test is_identifier(code[17])
+        @test code[17].text == "red"
+        @test is_operator(code[18])
+        @test is_literal(code[19])
+        @test is_string(code[19])
+        @test is_separator(code[20])
+        @test is_semicolon(code[20])
+        @test is_identifier(code[21])
+        @test code[21].text == "green"
+        @test is_operator(code[22])
+        @test code[22].text == "+="
+        @test is_literal(code[23])
+        @test is_character(code[23])
+        @test is_separator(code[24])
+        @test is_semicolon(code[24])
 
         # Check parsing of integer suffixes.
         @test tokenize(:C, "0x12f4ul") == Token["0x12f4ul" => (:integer, 1)]
