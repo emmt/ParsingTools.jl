@@ -220,7 +220,7 @@ function tokenize(lang::Val{:C}, code::String)
                     "unfinished literal $type, from line $linestart to $line")
                 t = code[index]
                 if t == c && !escape
-                    push!(tokens, SubString(code, anchor, index) => (type, line))
+                    push!(tokens, SubString(code, anchor, index) => (type, linestart))
                     index = nextind(code, index)
                     break
                 elseif t == '\\'
@@ -236,13 +236,14 @@ function tokenize(lang::Val{:C}, code::String)
         end
         if c == '\\'
             # A backslash only makes sense to escape a newline.
+            linestart = line
             next = nextind(code, index)
             next <= stop || error("orphan backslash, line $line")
             t = code[next]
             if t == '\n'
                 line += 1
             end
-            push!(tokens, SubString(code, index, next) => (:escape, line))
+            push!(tokens, SubString(code, index, next) => (:escape, linestart))
             index = nextind(code, next)
             continue
         end

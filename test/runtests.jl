@@ -27,7 +27,7 @@ using Aqua
         @test is_separator(code[9])
         @test is_semicolon(code[9])
         @test is_escape_newline(code[10])
-        @test code[10].line == 2
+        @test code[10].line == 1
         @test is_identifier(code[11])
         @test code[11].text == "blue"
         @test code[11].line == 2
