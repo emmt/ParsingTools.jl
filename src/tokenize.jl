@@ -1,26 +1,4 @@
 """
-    t = Token(text, type, line)
-    t = Token(text => (type, line))
-
-Build an object representing a code token. Arguments `text`, `type`, and `line` are
-respectively the token as written in the code, its type (a `Symbol`), and the (starting)
-line number in the code. These elements can be retrieved by `t.text`, `t.type` and `t.line`.
-
-"""
-Token((text,(type,line))::TokenAsPair) = Token(text, type, line)
-
-Base.convert(::Type{Token}, t::Token) = t
-Base.convert(::Type{Token}, t::TokenAsPair) = Token(t)::Token
-
-Base.show(io::IO, t::Token) =
-    print(io, "Token(\"", escape_string(t.text), "\" => (:", t.type, ", ", t.line, "))")
-
-for f in (:(==), :isequal)
-    @eval Base.$f(A::Token, B::Token) =
-        A === B || ($f(A.type, B.type) && $f(A.line, B.line) && $f(A.text, B.text))
-end
-
-"""
     ParsingTools.normalize_code(str) -> str′::String
 
 Replace CR and CR-LF by LF in code string `str` and convert it to a regular `String` (for

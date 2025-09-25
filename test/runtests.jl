@@ -6,6 +6,32 @@ using Aqua
 
 @testset "ParsingTools.jl" begin
     @testset "tokenize" begin
+
+        code = @inferred tokenize(:C, "([{}])*,;\\\nblue")
+        @test is_opening(code[1])
+        @test is_opening(code[2])
+        @test is_opening(code[3])
+        @test is_closing(code[4])
+        @test is_closing(code[5])
+        @test is_closing(code[6])
+        @test is_opening_parenthesis(code[1])
+        @test is_opening_bracket(code[2])
+        @test is_opening_brace(code[3])
+        @test is_closing_brace(code[4])
+        @test is_closing_bracket(code[5])
+        @test is_closing_parenthesis(code[6])
+        @test is_operator(code[7])
+        @test is_asterisk(code[7])
+        @test is_separator(code[8])
+        @test is_comma(code[8])
+        @test is_separator(code[9])
+        @test is_semicolon(code[9])
+        @test is_escape_newline(code[10])
+        @test code[10].line == 2
+        @test is_identifier(code[11])
+        @test code[11].text == "blue"
+        @test code[11].line == 2
+
         # Check parsing of integer suffixes.
         @test tokenize(:C, "0x12f4ul") == Token["0x12f4ul" => (:integer, 1)]
         @test tokenize(:C, "0x12f4alLu") == Token["0x12f4alLu" => (:integer, 1)]
