@@ -349,3 +349,48 @@ function tokenize(lang::Val{:C}, code::String)
     end
     return tokens
 end
+
+"""
+    ParsingTools.cleanup(code; merge_lines=false, strip_comments=false)
+
+Clean-up `code` for easier post-processing. Nothing is done by default, the following
+keywords specify which operations are to be performed:
+
+- Specify `strip_comments=true` to remove all comments.
+
+- Specify `merge_lines=true` to merge lines separated by an escaped newline, i.e. "\\\n".
+
+"""
+function cleanup(tokens::AbstractVector{<:Token};
+                 merge_lines::Bool = false,
+                 strip_comments::Bool = false)
+    result = sizehint!(Vector{Token}(undef, 0), length(tokens))
+    line = -1
+    prevline = -1
+    escape_newline = false
+    for t in tokens
+        if t.line > prevline
+            # Line has changed in input code.
+            if escape_newline
+                # This line change is ignored.
+                escape_newline = false
+            else
+                # Update line number for output tokens.
+                line = t.line
+            end
+        end
+        prevline = t.line
+        if strip_comments && is_comment(t)
+            # Skip comment.
+            continue
+        end
+        if merge_lines && is_escape_newline(t)
+            # Next change of line will be ignored.
+            escape_newline = true
+            continue
+        end
+        # Append token to result with, possibly, a different line number.
+        push!(result, t.text => (t.type, line))
+    end
+    return result
+end

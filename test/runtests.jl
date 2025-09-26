@@ -168,6 +168,77 @@ using Aqua
                          "="          => (:operator, 9),
                          "621917ull"  => (:integer, 9),
                          ";"          => (:separator, 9)]
+
+        # Check `Parsingtools.cleanup`.
+        code = @inferred tokenize(:C,
+            """
+            int x = 3; // Some comment.
+            #define NV (85\\
+                        + 7)
+            short b = 5 /* another comment */;
+            """)
+        @test @inferred(ParsingTools.cleanup(code)) == code
+        @test @inferred(ParsingTools.cleanup(code; strip_comments=true)) == Token[
+            "int" => (:name, 1),
+            "x" => (:name, 1),
+            "=" => (:operator, 1),
+            "3" => (:integer, 1),
+            ";" => (:separator, 1),
+            "#" => (:operator, 2),
+            "define" => (:name, 2),
+            "NV" => (:name, 2),
+            "(" => (:opening, 2),
+            "85" => (:integer, 2),
+            "\\\n" => (:escape, 2),
+            "+" => (:operator, 3),
+            "7" => (:integer, 3),
+            ")" => (:closing, 3),
+            "short" => (:name, 4),
+            "b" => (:name, 4),
+            "=" => (:operator, 4),
+            "5" => (:integer, 4),
+            ";" => (:separator, 4)]
+        @test @inferred(ParsingTools.cleanup(code; merge_lines=true, strip_comments=true)) == Token[
+            "int" => (:name, 1),
+            "x" => (:name, 1),
+            "=" => (:operator, 1),
+            "3" => (:integer, 1),
+            ";" => (:separator, 1),
+            "#" => (:operator, 2),
+            "define" => (:name, 2),
+            "NV" => (:name, 2),
+            "(" => (:opening, 2),
+            "85" => (:integer, 2),
+            "+" => (:operator, 2),
+            "7" => (:integer, 2),
+            ")" => (:closing, 2),
+            "short" => (:name, 4),
+            "b" => (:name, 4),
+            "=" => (:operator, 4),
+            "5" => (:integer, 4),
+            ";" => (:separator, 4)]
+        @test @inferred(ParsingTools.cleanup(code; merge_lines=true)) == Token[
+            "int" => (:name, 1),
+            "x" => (:name, 1),
+            "=" => (:operator, 1),
+            "3" => (:integer, 1),
+            ";" => (:separator, 1),
+            "// Some comment." => (:comment, 1),
+            "#" => (:operator, 2),
+            "define" => (:name, 2),
+            "NV" => (:name, 2),
+            "(" => (:opening, 2),
+            "85" => (:integer, 2),
+            "+" => (:operator, 2),
+            "7" => (:integer, 2),
+            ")" => (:closing, 2),
+            "short" => (:name, 4),
+            "b" => (:name, 4),
+            "=" => (:operator, 4),
+            "5" => (:integer, 4),
+            "/* another comment */" => (:comment, 4),
+            ";" => (:separator, 4)]
+
     end
 end
 

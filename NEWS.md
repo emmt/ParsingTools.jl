@@ -15,6 +15,9 @@
   `is_opening`, `is_opening_brace`, `is_opening_bracket`, `is_opening_parenthesis`,
   `is_operator`, `is_semicolon`, `is_separator`, and `is_string`.
 
+- `ParsingTools.cleanup(tokens; kwds...)` to clean-up code `tokens` according to keywords
+  `kwds...`.
+
 ### Fixed
 
 - Line number is that of the line where sits the 1st character of a token.

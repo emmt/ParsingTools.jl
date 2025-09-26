@@ -30,7 +30,7 @@ export
 
 using Compat
 
-@compat public anchored!, normalize_code
+@compat public anchored!, normalize_code, cleanup
 
 include("types.jl")
 include("tokens.jl")
